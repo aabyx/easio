@@ -1,39 +1,36 @@
-var eO = (function () {
-    var easio = {};
+(function( $ ) {
+    var easioCallbacks = [];
 
-    easio.__readyCallbacks__ = [];
-    easio.ready = function (callback) {
-        this.__readyCallbacks__.push(callback);
+    $.easIOready = function (callback) {
+        easioCallbacks.push(callback);
     };
-    easio.__ready__ = function () {
-        var i;
-        for (i = 0; i < easio.__readyCallbacks__.length; i++) {
-            easio.__readyCallbacks__[i]();
-        }
-    }
-
-    return easio;
-}());
+    $.__easIOready__ = function () {
+        $.each(easioCallbacks, function (idx, callback) {
+            callback();
+        });
+    };
+})( jQuery );
 
 require([
-    "resources/jquery.js",
     "resources/jsrender.js",
-    "resources/jquery.observable.js"
+    "resources/jquery.observable.js",
     ], function () {
         require([
+            "resources/jquery.cookie.js",
             "resources/jquery.views.js",
         ], function () {
             require([
-                "easio/utils.js"
+                "easio/overload.js",
+                "easio/jquery.utils.js",
             ], function () {
-                if (!window.Websocket) {
+                if (!window.WebSocket) {
                     require([
                         "easio/websocket.js"
                     ], function () {
-                        eO.__ready__();
+                        $.__easIOready__();
                     })
                 } else {
-                    eO.__ready__();
+                    $.__easIOready__();
                 }
             });
         })

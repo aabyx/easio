@@ -134,6 +134,7 @@ class WSandler(WebSocketHandler):
         if message.startswith("SESSID="):
             self.sessid = "=".join(message.split("=")[1:])
             Server.instance.register(self.sessid, self)
+            self.send("SESSID=OK")
         elif self.sessid:
             Server.instance.onMessage(self.sessid, "WS", message)
         else:
@@ -142,6 +143,12 @@ class WSandler(WebSocketHandler):
     def on_close(self):
         if self.sessid:
             Server.instance.unregister(self.sessid, self)
+
+    def send(self, data):
+        if not isinstance(data, str):
+            data = dumps(data)
+        print("Sending message", data)
+        self.write_message(data)
 
 
 if __name__ == "__main__":

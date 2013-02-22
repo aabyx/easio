@@ -39,6 +39,10 @@ function WebSocket(url) {
     this.onclose = undefined;
     this.onmessage = undefined;
 
+/* Check URL
+        throw new SyntaxError("An invalid or illegal string was specified");
+*/
+
     var parts = url.split("/"),
         protocol = parts.shift().split(":")[0].replace("ws", "http");
     parts.shift();
@@ -62,7 +66,7 @@ WebSocket.prototype.__get = function () {
         protocol = (arguments.length > 1)? arguments[1] : "POST",
         req = new XMLHttpRequest();
     req.open(protocol, this.__url, true);
-    req.setRequestHeader("AjaxWS-ID", Cookie.read("Device"));
+    req.setRequestHeader("AjaxWS-ID", $.cookie("Device"));
     req.setRequestHeader("Content-Type", "application/json");
     var ajaxWS = this;
     req.onreadystatechange = function () {
@@ -194,6 +198,6 @@ WebSocket.prototype.send = function (data) {
             (data.constructor.name === "ArrayBuffer")? "ArrayBuffer" :
             "ArrayBufferView";
 
-    this.bufferedAmount += stringBytesLength(data);
+    this.bufferedAmount += $.stringBytesLength(data);
     this.__outbox.push(data);
 };
